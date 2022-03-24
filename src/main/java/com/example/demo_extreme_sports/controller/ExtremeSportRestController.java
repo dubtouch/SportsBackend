@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,14 +30,13 @@ public class ExtremeSportRestController {
 
     @PostMapping("/{country}")
     public ResponseEntity<Country> addCountry(@PathVariable String country) {
-        Optional<Country> result = countryRepository.findById(country);
-        if (result.isEmpty()) {
-            Country temp = new Country();
-            temp.setName(country);
-            countryRepository.save(temp);
-            return ResponseEntity.status(HttpStatus.CREATED).body(temp);
+        Optional<Country> countryOptional = countryRepository.findById(country);
+        if (countryOptional.isEmpty()) {
+            Country tempCountry = new Country(country);
+            countryRepository.save(tempCountry);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tempCountry);
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(result.get());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
 
     @GetMapping("/{country}")
@@ -48,47 +46,81 @@ public class ExtremeSportRestController {
         return ResponseEntity.status(HttpStatus.OK).body(result.get());
     }
 
-    @GetMapping("countries")
+    @GetMapping("/countries")
     public Iterable<Country> getCountries() {
         return countryRepository.findAll();
     }
 
     @PostMapping("/{country}/{region}")
-    public void addRegion(@PathVariable String country, @PathVariable String region) {
-        Country countryResult = countryRepository.findById(country).get();
+    public ResponseEntity<Region> addRegion(@PathVariable String country, @PathVariable String region) {
+        Optional<Country> countryResult = countryRepository.findById(country);
+        if (countryResult.isEmpty()) {
+            Country tempCountry = new Country(country);
+            countryRepository.save(tempCountry);
+            Region tempRegion = new Region(region, tempCountry);
+            regionRepository.save(tempRegion);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tempRegion);
+        }
         Optional<Region> regionResult = regionRepository.findById(region);
         if (regionResult.isPresent()) {
-            countryResult.addRegion(regionResult.get());
-            regionRepository.save(regionResult.get());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } else  {
-            Region temp = new Region();
-            temp.setName(region);
-            countryResult.addRegion(temp);
-            regionRepository.save(temp);
+            Region tempRegion = new Region(region, countryResult.get());
+            regionRepository.save(tempRegion);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tempRegion);
         }
-
-        countryRepository.save(countryResult);
-
     }
 
-
-    public Region getRegion(@PathVariable String country, @PathVariable String region) {
-        return regionRepository.findById(region).get();
+    @GetMapping("/{country}/{region}")
+    public ResponseEntity<Region> getRegion(@PathVariable String country, @PathVariable String region) {
+        Region regionResult = regionRepository.findRegionByIdAndCountryName(country, region);
+        if (regionResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(regionResult);
     }
 
     @PostMapping("/{country}/{region}/{city}")
-    public void addCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
+    public ResponseEntity<City> addCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
+        Optional<Country> countryOptional = countryRepository.findById(country);
+        if (countryOptional.isEmpty()) {
+            Country tempCountry = new Country(country);
+            countryRepository.save(tempCountry);
+            Region tempRegion = new Region(region, tempCountry);
+            regionRepository.save(tempRegion);
+            City tempCity = new City(city, tempRegion);
+            cityRepository.save(tempCity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tempCity);
+        }
+        Optional<Region> regionOptional = regionRepository.findById(region);
+        if (regionOptional.isEmpty()) {
+            Country tempCountry = countryOptional.get();
+            Region tempRegion = new Region(region, tempCountry);
+            regionRepository.save(tempRegion);
+            City tempCity = new City(city, tempRegion);
+            cityRepository.save(tempCity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tempCity);
+        }
+        City cityOptional = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
+        if (cityOptional == null) {
+            Region tempRegion = regionOptional.get();
+            City tempCity = new City(city, tempRegion);
+            cityRepository.save(tempCity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tempCity);
 
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
 
     @GetMapping("/{country}/{region}/{city}")
     public City getCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
-        return null;
+        return cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
     }
 
     @PostMapping("/{country}/{region}/{city}/sport")
-    public void addSport(@RequestBody ExtremeSport extremeSport, @PathVariable String country, @PathVariable String region, @PathVariable String city) {
-
+    public ExtremeSport addSport(@RequestBody ExtremeSport extremeSport, @PathVariable String country, @PathVariable String region, @PathVariable String city) {
+        Optional<Country> countryOptional = countryRepository.findById(country);
+        if (countryOptional.isEmpty()) {
+            Country tempCountry = new Country()
+        }
 
     }
 

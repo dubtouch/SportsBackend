@@ -10,12 +10,22 @@ import java.util.List;
 @Table(name = "region")
 public class Region {
     @Id
+    @Column(name = "region_name")
     private String name;
     @OneToMany(mappedBy = "region")
     private List<City> cityList;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_name")
     @JsonIgnore
     private Country country;
+
+
+    public Region(String name, Country country) {
+        this.name = name;
+        this.country = country;
+    }
+
+    public Region() {}
 
     public String getName() {
         return name;

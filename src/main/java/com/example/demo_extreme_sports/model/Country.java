@@ -1,18 +1,23 @@
 package com.example.demo_extreme_sports.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity(name = "Country")
 @Table(name = "country")
 public class Country {
+
     @Id
+    @Column(name = "country_name")
     private String name;
     @OneToMany(mappedBy = "country")
     private List<Region> regionList;
+
+    public Country(String name) {
+        this.name = name;
+    }
+
+    public Country(){};
 
     public String getName() {
         return name;

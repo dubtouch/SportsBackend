@@ -16,6 +16,7 @@ public class ExtremeSport {
     private LocalDate availableTill;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @JoinColumn(name = "city_name")
     private City city;
 
     public City getCity() {

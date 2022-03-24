@@ -11,11 +11,13 @@ public class City {
     @Id
     @GeneratedValue
     private Long id;
+    @Column(name = "city_name")
     private String name;
     @OneToMany(mappedBy = "city")
     private List<ExtremeSport> extremeSportList;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @JoinColumn(name = "region_name")
     private Region region;
 
     public String getName() {
@@ -41,6 +43,13 @@ public class City {
     public void setRegion(Region region) {
         this.region = region;
     }
+
+    public City(String name, Region region) {
+        this.name = name;
+        this.region = region;
+    }
+
+    public City() {};
 
     public void addExtremeSport(ExtremeSport extremeSport) {
         extremeSportList.add(extremeSport);
