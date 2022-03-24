@@ -11,7 +11,8 @@ public class ExtremeSport {
     @Id
     @GeneratedValue
     private Long id;
-    private ExtremeSportType sportType;
+    @Column(name = "sport_name")
+    private String name;
     private LocalDate availableFrom;
     private LocalDate availableTill;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,12 +28,12 @@ public class ExtremeSport {
         this.city = city;
     }
 
-    public ExtremeSportType getSportType() {
-        return sportType;
+    public String getName() {
+        return name;
     }
 
-    public void setSportType(ExtremeSportType sportType) {
-        this.sportType = sportType;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getAvailableFrom() {

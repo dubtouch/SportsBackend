@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -111,18 +112,68 @@ public class ExtremeSportRestController {
     }
 
     @GetMapping("/{country}/{region}/{city}")
-    public City getCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
-        return cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
+    public ResponseEntity<City> getCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
+        City tempCity = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
+        if (tempCity == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(tempCity);
     }
 
     @PostMapping("/{country}/{region}/{city}/sport")
-    public ExtremeSport addSport(@RequestBody ExtremeSport extremeSport, @PathVariable String country, @PathVariable String region, @PathVariable String city) {
+    public ResponseEntity<ExtremeSport> addSport(@RequestBody ExtremeSport extremeSport, @PathVariable String country, @PathVariable String region, @PathVariable String city) {
         Optional<Country> countryOptional = countryRepository.findById(country);
         if (countryOptional.isEmpty()) {
-            Country tempCountry = new Country()
+            Country tempCountry = new Country(country);
+            countryRepository.save(tempCountry);
+            Region tempRegion = new Region(region, tempCountry);
+            regionRepository.save(tempRegion);
+            City tempCity = new City(city, tempRegion);
+            cityRepository.save(tempCity);
+            extremeSport.setCity(tempCity);
+            extremeSportRepository.save(extremeSport);
+            return ResponseEntity.status(HttpStatus.CREATED).body(extremeSport);
         }
-
+        Optional<Region> regionOptional = regionRepository.findById(region);
+        if (regionOptional.isEmpty()) {
+            Country tempCountry = countryOptional.get();
+            Region tempRegion = new Region(region, tempCountry);
+            regionRepository.save(tempRegion);
+            City tempCity = new City(city, tempRegion);
+            cityRepository.save(tempCity);
+            extremeSport.setCity(tempCity);
+            extremeSportRepository.save(extremeSport);
+            return ResponseEntity.status(HttpStatus.CREATED).body(extremeSport);
+        }
+        City tempCity = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
+        if (city == null) {
+            Country tempCountry = countryOptional.get();
+            Region tempRegion = regionOptional.get();
+            tempCity = new City(city, tempRegion);
+            cityRepository.save(tempCity);
+            extremeSport.setCity(tempCity);
+            extremeSportRepository.save(extremeSport);
+            return ResponseEntity.status(HttpStatus.CREATED).body(extremeSport);
+        }
+        ExtremeSport tempExtremeSport = extremeSportRepository.findExtremeSport(country, region, city, extremeSport.getName());
+        if (tempExtremeSport == null) {
+            extremeSport.setCity(tempCity);
+            extremeSportRepository.save(extremeSport);
+            return ResponseEntity.status(HttpStatus.CREATED).body(extremeSport);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    }
+    @GetMapping("/{country}/{region}/{city}/{sport}")
+    public ResponseEntity<ExtremeSport> getSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport) {
+        ExtremeSport extremeSport = extremeSportRepository.findExtremeSport(country, region, city, sport);
+        if (extremeSport == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(extremeSport);
     }
 
-
+    @GetMapping("/sport")
+    public ExtremeSport getExtremeSport() {
+        ExtremeSport extremeSport = new ExtremeSport();
+        extremeSport.setName("ski");
+        extremeSport.setAvailableFrom(LocalDate.now());
+        extremeSport.setAvailableTill(LocalDate.now());
+        return  extremeSport;
+    }
 }
