@@ -1,11 +1,18 @@
 package com.example.demo_extreme_sports.model;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Entity(name = "ExtremeSport")
+@Table(name = "extreme_sport")
 public class ExtremeSport {
+    @Id
+    @GeneratedValue
+    private Long id;
     private ExtremeSportType sportType;
     private LocalDate availableFrom;
     private LocalDate availableTill;
+    @ManyToOne(fetch = FetchType.LAZY)
     private City city;
 
     public ExtremeSportType getSportType() {
