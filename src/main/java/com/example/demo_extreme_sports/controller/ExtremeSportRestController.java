@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RestController
@@ -45,6 +45,12 @@ public class ExtremeSportRestController {
         Optional<Country> result = countryRepository.findById(country);
         if (result.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(result.get());
+    }
+
+    @PatchMapping("/{country}")
+    @Transactional
+    public ResponseEntity<Country> updateCountry(@PathVariable String country, @RequestParam String newName) {
+
     }
 
     @DeleteMapping("/{country}")
