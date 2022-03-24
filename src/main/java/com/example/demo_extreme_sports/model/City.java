@@ -50,6 +50,10 @@ public class City {
         this.region = region;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public City() {};
 
     public void addExtremeSport(ExtremeSport extremeSport) {

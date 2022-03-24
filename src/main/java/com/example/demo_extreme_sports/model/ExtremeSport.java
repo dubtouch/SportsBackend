@@ -24,6 +24,10 @@ public class ExtremeSport {
         return city;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setCity(City city) {
         this.city = city;
     }

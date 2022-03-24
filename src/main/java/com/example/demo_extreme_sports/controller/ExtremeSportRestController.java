@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -148,6 +149,15 @@ public class ExtremeSportRestController {
         return ResponseEntity.status(HttpStatus.OK).body(tempCity);
     }
 
+    @PatchMapping("/{country}/{region}/{city}")
+    @Transactional
+    public ResponseEntity<City> updateRegion(@PathVariable String country, @PathVariable String region, @PathVariable String city, @RequestParam String newName) {
+        City result = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
+        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        cityRepository.updateCity(result.getId(), newName);
+        return ResponseEntity.status(HttpStatus.OK).body(cityRepository.findCityByNameAndRegionAndCountry(country, region, newName));
+    }
+
     @DeleteMapping("/{country}/{region}/{city}")
     public ResponseEntity<City> deleteCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
         City tempCity = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
@@ -209,5 +219,20 @@ public class ExtremeSportRestController {
         if (extremeSport == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         extremeSportRepository.delete(extremeSport);
         return ResponseEntity.status(HttpStatus.OK).body(extremeSport);
+    }
+
+    @PatchMapping("/{country}/{region}/{city}/{sport}")
+    @Transactional
+    public ResponseEntity<ExtremeSport> updateSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport,
+                                                    @RequestParam(required = false) String newName,
+                                                    @RequestParam(required = false) String availableFrom,
+                                                    @RequestParam(required = false) String availableTill) {
+        ExtremeSport result = extremeSportRepository.findExtremeSport(country, region, city, sport);
+        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        String passedName = newName == null ? result.getName() : newName;
+        LocalDate passedAvailableFrom = availableFrom == null ? result.getAvailableFrom() : LocalDate.parse(availableFrom);
+        LocalDate passedAvailableTill = availableTill == null ? result.getAvailableTill() : LocalDate.parse(availableTill);
+        extremeSportRepository.updateExtremeSport(result.getId(), passedName, passedAvailableFrom, passedAvailableTill);
+        return ResponseEntity.status(HttpStatus.OK).body(extremeSportRepository.findExtremeSport(country, region, city, sport));
     }
 }
