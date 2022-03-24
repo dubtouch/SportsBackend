@@ -3,6 +3,7 @@ package com.example.demo_extreme_sports.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity(name = "ExtremeSport")
@@ -15,6 +16,20 @@ public class ExtremeSport {
     private String name;
     private LocalDate availableFrom;
     private LocalDate availableTill;
+    private BigDecimal costPerDay;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BigDecimal getCostPerDay() {
+        return costPerDay;
+    }
+
+    public void setCostPerDay(BigDecimal costPerDay) {
+        this.costPerDay = costPerDay;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "city_name")
