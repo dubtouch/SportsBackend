@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface RegionRepository extends CrudRepository<Region, String> {
 
     @Query("select r from Region r inner join r.country c where r.name = :region and c.name =:country")
@@ -13,4 +15,8 @@ public interface RegionRepository extends CrudRepository<Region, String> {
     @Modifying
     @Query("update Region r set r.name=:newName where id=:id")
     public void updateRegion(Long id, String newName);
+
+
+    @Query("select r from Region r inner join r.country c where c.name=:country")
+    public List<Region> getRegions(String country);
 }

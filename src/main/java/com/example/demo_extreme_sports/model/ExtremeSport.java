@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Table(name = "extreme_sport")
 public class ExtremeSport {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "sport_name")
     private String name;

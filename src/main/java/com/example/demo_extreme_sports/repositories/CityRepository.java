@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CityRepository extends CrudRepository<City, Long> {
@@ -15,4 +16,7 @@ public interface CityRepository extends CrudRepository<City, Long> {
     @Modifying
     @Query("update City c set c.name=:newName where id=:id")
     public void updateCity(Long id, String newName);
+
+    @Query("select ct from City ct join ct.region r join r.country c where r.name=:region and c.name=:country")
+    public List<City> getCities(String country, String region);
 }
