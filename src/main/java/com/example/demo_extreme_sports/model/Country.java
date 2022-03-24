@@ -8,10 +8,21 @@ import java.util.List;
 public class Country {
 
     @Id
+    @GeneratedValue
+    @Column(name = "country_id")
+    private Long id;
     @Column(name = "country_name")
     private String name;
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
     private List<Region> regionList;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Country(String name) {
         this.name = name;

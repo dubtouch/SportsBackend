@@ -10,6 +10,7 @@ import java.util.List;
 public class City {
     @Id
     @GeneratedValue
+    @Column(name = "city_id")
     private Long id;
     @Column(name = "city_name")
     private String name;
@@ -17,7 +18,7 @@ public class City {
     private List<ExtremeSport> extremeSportList;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name = "region_name")
+    @JoinColumn(name = "region_id")
     private Region region;
 
     public String getName() {

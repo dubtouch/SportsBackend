@@ -31,34 +31,37 @@ public class ExtremeSportRestController {
 
     @PostMapping("/{country}")
     public ResponseEntity<Country> addCountry(@PathVariable String country) {
-        Optional<Country> countryOptional = countryRepository.findById(country);
-        if (countryOptional.isEmpty()) {
-            Country tempCountry = new Country(country);
-            countryRepository.save(tempCountry);
-            return ResponseEntity.status(HttpStatus.CREATED).body(tempCountry);
+        Country result = countryRepository.findByName(country);
+        if (result == null) {
+            result = new Country(country);
+            countryRepository.save(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
 
     @GetMapping("/{country}")
     public ResponseEntity<Country> getCountry(@PathVariable String country) {
-        Optional<Country> result = countryRepository.findById(country);
-        if (result.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(result.get());
+        Country result = countryRepository.findByName(country);
+        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PatchMapping("/{country}")
     @Transactional
     public ResponseEntity<Country> updateCountry(@PathVariable String country, @RequestParam String newName) {
-
+        Country result = countryRepository.findByName(country);
+        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        countryRepository.updateCountry(country, newName);
+        return ResponseEntity.status(HttpStatus.OK).body(countryRepository.findByName(newName));
     }
 
     @DeleteMapping("/{country}")
     public ResponseEntity<Country> deleteCountry(@PathVariable String country) {
-        Optional<Country> result = countryRepository.findById(country);
-        if (result.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        countryRepository.delete(result.get());
-        return ResponseEntity.status(HttpStatus.OK).body(result.get());
+        Country result = countryRepository.findByName(country);
+        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        countryRepository.delete(result);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping("/countries")
@@ -68,62 +71,70 @@ public class ExtremeSportRestController {
 
     @PostMapping("/{country}/{region}")
     public ResponseEntity<Region> addRegion(@PathVariable String country, @PathVariable String region) {
-        Optional<Country> countryResult = countryRepository.findById(country);
-        if (countryResult.isEmpty()) {
-            Country tempCountry = new Country(country);
-            countryRepository.save(tempCountry);
-            Region tempRegion = new Region(region, tempCountry);
+        Country countryResult = countryRepository.findByName(country);
+        if (countryResult == null) {
+            countryResult = new Country(country);
+            countryRepository.save(countryResult);
+            Region tempRegion = new Region(region, countryResult);
             regionRepository.save(tempRegion);
             return ResponseEntity.status(HttpStatus.CREATED).body(tempRegion);
         }
-        Optional<Region> regionResult = regionRepository.findById(region);
-        if (regionResult.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-        } else  {
-            Region tempRegion = new Region(region, countryResult.get());
-            regionRepository.save(tempRegion);
-            return ResponseEntity.status(HttpStatus.CREATED).body(tempRegion);
+        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
+        if (regionResult == null) {
+            regionResult = new Region(region, countryResult);
+            regionRepository.save(regionResult);
+            return ResponseEntity.status(HttpStatus.CREATED).body(regionResult);
         }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
 
     @GetMapping("/{country}/{region}")
     public ResponseEntity<Region> getRegion(@PathVariable String country, @PathVariable String region) {
-        Region regionResult = regionRepository.findRegionByIdAndCountryName(country, region);
+        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
         if (regionResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(regionResult);
     }
 
     @DeleteMapping("/{country}/{region}")
     public ResponseEntity<Region> deleteRegion(@PathVariable String country, @PathVariable String region) {
-        Region regionResult = regionRepository.findRegionByIdAndCountryName(country, region);
+        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
         if (regionResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         regionRepository.delete(regionResult);
         return ResponseEntity.status(HttpStatus.OK).body(regionResult);
     }
 
+    @PatchMapping("/{country}/{region}")
+    @Transactional
+    public ResponseEntity<Region> updateRegion(@PathVariable String country, @PathVariable String region, @RequestParam String newName) {
+        Region result = regionRepository.findRegionByNameAndCountry(country, region);
+        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        regionRepository.updateRegion(result.getId(), newName);
+        return ResponseEntity.status(HttpStatus.OK).body(regionRepository.findRegionByNameAndCountry(country, newName));
+    }
+
     @PostMapping("/{country}/{region}/{city}")
     public ResponseEntity<City> addCity(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
-        Optional<Country> countryOptional = countryRepository.findById(country);
-        if (countryOptional.isEmpty()) {
-            Country tempCountry = new Country(country);
-            countryRepository.save(tempCountry);
-            Region tempRegion = new Region(region, tempCountry);
+        Country countryResult = countryRepository.findByName(country);
+        if (countryResult == null) {
+            countryResult = new Country(country);
+            countryRepository.save(countryResult);
+            Region tempRegion = new Region(region, countryResult);
             regionRepository.save(tempRegion);
             City tempCity = new City(city, tempRegion);
             cityRepository.save(tempCity);
             return ResponseEntity.status(HttpStatus.CREATED).body(tempCity);
         }
-        Optional<Region> regionOptional = regionRepository.findById(region);
-        if (regionOptional.isEmpty()) {
-            Region tempRegion = new Region(region, countryOptional.get());
-            regionRepository.save(tempRegion);
-            City tempCity = new City(city, tempRegion);
+        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
+        if (regionResult == null) {
+            regionResult = new Region(region, countryResult);
+            regionRepository.save(regionResult);
+            City tempCity = new City(city, regionResult);
             cityRepository.save(tempCity);
             return ResponseEntity.status(HttpStatus.CREATED).body(tempCity);
         }
-        City cityOptional = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
-        if (cityOptional == null) {
-            City tempCity = new City(city, regionOptional.get());
+        City cityResult = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
+        if (cityResult == null) {
+            City tempCity = new City(city, regionResult);
             cityRepository.save(tempCity);
             return ResponseEntity.status(HttpStatus.CREATED).body(tempCity);
         }
@@ -147,11 +158,11 @@ public class ExtremeSportRestController {
 
     @PostMapping("/{country}/{region}/{city}/sport")
     public ResponseEntity<ExtremeSport> addSport(@RequestBody ExtremeSport extremeSport, @PathVariable String country, @PathVariable String region, @PathVariable String city) {
-        Optional<Country> countryOptional = countryRepository.findById(country);
-        if (countryOptional.isEmpty()) {
-            Country tempCountry = new Country(country);
-            countryRepository.save(tempCountry);
-            Region tempRegion = new Region(region, tempCountry);
+        Country countryResult = countryRepository.findByName(country);
+        if (countryResult == null) {
+            countryResult = new Country(country);
+            countryRepository.save(countryResult);
+            Region tempRegion = new Region(region, countryResult);
             regionRepository.save(tempRegion);
             City tempCity = new City(city, tempRegion);
             cityRepository.save(tempCity);
@@ -159,11 +170,11 @@ public class ExtremeSportRestController {
             extremeSportRepository.save(extremeSport);
             return ResponseEntity.status(HttpStatus.CREATED).body(extremeSport);
         }
-        Optional<Region> regionOptional = regionRepository.findById(region);
-        if (regionOptional.isEmpty()) {
-            Region tempRegion = new Region(region, countryOptional.get());
-            regionRepository.save(tempRegion);
-            City tempCity = new City(city, tempRegion);
+        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
+        if (regionResult == null) {
+            regionResult = new Region(region, countryResult);
+            regionRepository.save(regionResult);
+            City tempCity = new City(city, regionResult);
             cityRepository.save(tempCity);
             extremeSport.setCity(tempCity);
             extremeSportRepository.save(extremeSport);
@@ -171,7 +182,7 @@ public class ExtremeSportRestController {
         }
         City tempCity = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
         if (tempCity == null) {
-            tempCity = new City(city, regionOptional.get());
+            tempCity = new City(city, regionResult);
             cityRepository.save(tempCity);
             extremeSport.setCity(tempCity);
             extremeSportRepository.save(extremeSport);

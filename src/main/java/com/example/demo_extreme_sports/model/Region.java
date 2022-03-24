@@ -10,12 +10,24 @@ import java.util.List;
 @Table(name = "region")
 public class Region {
     @Id
+    @GeneratedValue
+    @Column(name = "region_id")
+    private Long id;
     @Column(name = "region_name")
     private String name;
     @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     private List<City> cityList;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_name")
+    @JoinColumn(name = "country_id")
     @JsonIgnore
     private Country country;
 
