@@ -10,7 +10,7 @@ public class Country {
     @Id
     @Column(name = "country_name")
     private String name;
-    @OneToMany(mappedBy = "country")
+    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
     private List<Region> regionList;
 
     public Country(String name) {

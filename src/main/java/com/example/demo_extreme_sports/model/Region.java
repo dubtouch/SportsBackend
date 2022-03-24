@@ -12,7 +12,7 @@ public class Region {
     @Id
     @Column(name = "region_name")
     private String name;
-    @OneToMany(mappedBy = "region")
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     private List<City> cityList;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_name")

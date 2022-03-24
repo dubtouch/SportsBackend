@@ -13,7 +13,7 @@ public class City {
     private Long id;
     @Column(name = "city_name")
     private String name;
-    @OneToMany(mappedBy = "city")
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<ExtremeSport> extremeSportList;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
