@@ -1,5 +1,7 @@
 package com.example.demo_extreme_sports.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,8 +13,9 @@ public class City {
     private Long id;
     private String name;
     @OneToMany(mappedBy = "city")
-    private List<ExtremeSport> sportList;
+    private List<ExtremeSport> extremeSportList;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Region region;
 
     public String getName() {
@@ -23,12 +26,12 @@ public class City {
         this.name = name;
     }
 
-    public List<ExtremeSport> getSportList() {
-        return sportList;
+    public List<ExtremeSport> getExtremeSportList() {
+        return extremeSportList;
     }
 
-    public void setSportList(List<ExtremeSport> sportList) {
-        this.sportList = sportList;
+    public void setExtremeSportList(List<ExtremeSport> extremeSportList) {
+        this.extremeSportList = extremeSportList;
     }
 
     public Region getRegion() {
@@ -37,5 +40,10 @@ public class City {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public void addExtremeSport(ExtremeSport extremeSport) {
+        extremeSportList.add(extremeSport);
+        extremeSport.setCity(this);
     }
 }

@@ -1,5 +1,7 @@
 package com.example.demo_extreme_sports.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -13,7 +15,16 @@ public class ExtremeSport {
     private LocalDate availableFrom;
     private LocalDate availableTill;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private City city;
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
 
     public ExtremeSportType getSportType() {
         return sportType;

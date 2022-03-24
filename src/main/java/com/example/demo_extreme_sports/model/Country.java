@@ -29,4 +29,9 @@ public class Country {
     public void setRegionList(List<Region> regionList) {
         this.regionList = regionList;
     }
+
+    public void addRegion(Region region) {
+        regionList.add(region);
+        region.setCountry(this);
+    }
 }

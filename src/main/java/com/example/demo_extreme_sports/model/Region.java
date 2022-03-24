@@ -1,5 +1,8 @@
 package com.example.demo_extreme_sports.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,6 +14,7 @@ public class Region {
     @OneToMany(mappedBy = "region")
     private List<City> cityList;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Country country;
 
     public String getName() {
@@ -35,6 +39,11 @@ public class Region {
 
     public void setCountry(Country country) {
         this.country = country;
+    }
+
+    public void addCity(City city) {
+        cityList.add(city);
+        city.setRegion(this);
     }
 
 }
