@@ -20,22 +20,22 @@ public class CountryRestController {
 
     @PostMapping("/{country}")
     public void addCountry(@PathVariable String country) {
-        return countryService.addCountry(country);
+        countryService.addCountry(country);
     }
 
     @GetMapping("/{country}")
-    public ResponseEntity<Country> findCountry(@PathVariable String country) {
+    public Country findCountry(@PathVariable String country) {
         return countryService.findCountry(country);
     }
 
     @PatchMapping("/{country}")
-    public ResponseEntity<Country> updateCountry(@PathVariable String country, @RequestParam String newName) {
-        return countryService.updateCountry(country, newName);
+    public void updateCountry(@PathVariable String country, @RequestParam String newName) {
+        countryService.updateCountry(country, newName);
     }
 
     @DeleteMapping("/{country}")
-    public ResponseEntity<Country> deleteCountry(@PathVariable String country) {
-        return countryService.deleteCountry(country);
+    public void deleteCountry(@PathVariable String country) {
+        countryService.deleteCountry(country);
     }
 
 

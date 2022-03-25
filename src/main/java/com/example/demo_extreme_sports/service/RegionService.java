@@ -1,16 +1,16 @@
 package com.example.demo_extreme_sports.service;
 
+import com.example.demo_extreme_sports.exception.CountryNotFoundException;
+import com.example.demo_extreme_sports.exception.RegionAlreadyPresentException;
+import com.example.demo_extreme_sports.exception.RegionNotFoundException;
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.model.Region;
 import com.example.demo_extreme_sports.repositories.CountryRepository;
 import com.example.demo_extreme_sports.repositories.RegionRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
-
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RegionService {
@@ -22,53 +22,46 @@ public class RegionService {
         this.regionRepository = regionRepository;
     }
 
-    public ResponseEntity<Region> addRegion(String country, String region) {
-        Country countryResult = countryRepository.findByName(country);
-        if (countryResult == null) {
-            countryResult = new Country(country);
-            countryRepository.save(countryResult);
-            Region tempRegion = new Region(region, countryResult);
+    public void addRegion(String country, String region) {
+        Optional<Country> countryResult = countryRepository.findByName(country);
+        if (countryResult.isEmpty()) {
+            Country tempCountry = new Country(country);
+            countryRepository.save(tempCountry);
+            Region tempRegion = new Region(region, tempCountry);
             regionRepository.save(tempRegion);
-            return ResponseEntity.status(HttpStatus.CREATED).body(tempRegion);
+            return;
         }
-        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
-        if (regionResult == null) {
-            regionResult = new Region(region, countryResult);
-            regionRepository.save(regionResult);
-            return ResponseEntity.status(HttpStatus.CREATED).body(regionResult);
+        Optional<Region> regionResult = regionRepository.findRegionByNameAndCountry(country, region);
+        if (regionResult.isEmpty()) {
+            Region tempRegion = new Region(region, countryResult.get());
+            regionRepository.save(tempRegion);
+            return;
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        throw new RegionAlreadyPresentException(region);
     }
 
-    public ResponseEntity<Region> getRegion(@PathVariable String country, @PathVariable String region) {
-        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
-        if (regionResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(regionResult);
+    public Region findRegion(String country, String region) {
+        return regionRepository.findRegionByNameAndCountry(country, region)
+                .orElseThrow(() -> new RegionNotFoundException(region));
     }
 
 
-    @GetMapping("/{country}/regions")
-    public ResponseEntity<List<Region>> getRegions(@PathVariable String country) {
-        Country result = countryRepository.findByName(country);
-        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(regionRepository.getRegions(country));
+    public List<Region> findRegions(String country) {
+        Optional<Country> result = countryRepository.findByName(country);
+        if (result.isEmpty()) throw new CountryNotFoundException(country);
+        else return regionRepository.findRegions(country);
 
     }
 
-    @DeleteMapping("/{country}/{region}")
-    public ResponseEntity<Region> deleteRegion(@PathVariable String country, @PathVariable String region) {
-        Region regionResult = regionRepository.findRegionByNameAndCountry(country, region);
-        if (regionResult == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        regionRepository.delete(regionResult);
-        return ResponseEntity.status(HttpStatus.OK).body(regionResult);
+    public void deleteRegion(String country, String region) {
+        Optional<Region> regionResult = regionRepository.findRegionByNameAndCountry(country, region);
+        if (regionResult.isEmpty()) throw new RegionNotFoundException(region);
+        else regionRepository.delete(regionResult.get());
     }
-
-    @PatchMapping("/{country}/{region}")
     @Transactional
-    public ResponseEntity<Region> updateRegion(@PathVariable String country, @PathVariable String region, @RequestParam String newName) {
-        Region result = regionRepository.findRegionByNameAndCountry(country, region);
-        if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        regionRepository.updateRegion(result.getId(), newName);
-        return ResponseEntity.status(HttpStatus.OK).body(regionRepository.findRegionByNameAndCountry(country, newName));
+    public void updateRegion(String country, String region, String newName) {
+        Optional<Region> result = regionRepository.findRegionByNameAndCountry(country, region);
+        if (result.isEmpty()) throw new RegionNotFoundException(region);
+        else regionRepository.updateRegion(result.get().getId(), newName);
     }
 }
