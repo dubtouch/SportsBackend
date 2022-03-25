@@ -23,4 +23,8 @@ public interface ExtremeSportRepository extends CrudRepository<ExtremeSport, Lon
 
     @Query("select es from ExtremeSport es join es.city ct join ct.region r join r.country c where ct.name=:city and r.name=:region and c.name=:country")
     public List<ExtremeSport> findSports(String country, String region, String city);
+
+
+    @Query("select es.name, es.availableFrom, es.availableTill, es.costPerDay, ct.name, r.name, c.name from ExtremeSport es join es.city ct join ct.region r join r.country c")
+    public List<Object[]> findBestLocations();
 }

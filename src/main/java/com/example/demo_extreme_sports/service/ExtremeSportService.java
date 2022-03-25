@@ -12,13 +12,11 @@ import com.example.demo_extreme_sports.repositories.CountryRepository;
 import com.example.demo_extreme_sports.repositories.ExtremeSportRepository;
 import com.example.demo_extreme_sports.repositories.RegionRepository;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class ExtremeSportService {
