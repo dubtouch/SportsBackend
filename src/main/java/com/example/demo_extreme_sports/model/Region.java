@@ -17,6 +17,11 @@ public class Region {
     private String name;
     @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     private List<City> cityList;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    @JsonIgnore
+    private Country country;
+
 
     public Long getId() {
         return id;
@@ -25,11 +30,6 @@ public class Region {
     public void setId(Long id) {
         this.id = id;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id")
-    @JsonIgnore
-    private Country country;
 
 
     public Region(String name, Country country) {
