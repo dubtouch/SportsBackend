@@ -1,9 +1,6 @@
 package com.example.demo_extreme_sports.controller;
 
-import com.example.demo_extreme_sports.exception.CountryAlreadyPresentException;
-import com.example.demo_extreme_sports.exception.CountryNotFoundException;
-import com.example.demo_extreme_sports.exception.RegionAlreadyPresentException;
-import com.example.demo_extreme_sports.exception.RegionNotFoundException;
+import com.example.demo_extreme_sports.exception.*;
 import com.example.demo_extreme_sports.model.ErrorDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,6 +34,20 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<ErrorDetails> regionAlreadyPresentException(RegionAlreadyPresentException regionAlreadyPresentException) {
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setMessage("region already present: " + regionAlreadyPresentException.getMessage());
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(CityNotFoundException.class)
+    public ResponseEntity<ErrorDetails> cityNotFoundExceptionHandler(CityNotFoundException cityNotFoundException) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage("city not found: " + cityNotFoundException.getMessage());
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(CityAlreadyPresentException.class)
+    public ResponseEntity<ErrorDetails> cityAlreadyPresentException(CityAlreadyPresentException cityAlreadyPresentException) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage("city already present: " + cityAlreadyPresentException.getMessage());
         return ResponseEntity.badRequest().body(errorDetails);
     }
 }
