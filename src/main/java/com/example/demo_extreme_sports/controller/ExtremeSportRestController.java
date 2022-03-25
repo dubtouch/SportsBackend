@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
+@RequestMapping("/country/{country}/region/{region}/city/{city}")
 public class ExtremeSportRestController {
     private final ExtremeSportService extremeSportService;
 
@@ -14,22 +15,22 @@ public class ExtremeSportRestController {
         this.extremeSportService = extremeSportService;
     }
 
-    @PostMapping("/{country}/{region}/{city}/sport")
+    @PostMapping("/sport")
     public void addSport(@RequestBody ExtremeSport extremeSport, @PathVariable String country, @PathVariable String region, @PathVariable String city) {
         extremeSportService.addSport(extremeSport, country, region, city);
     }
 
-    @GetMapping("/{country}/{region}/{city}/{sport}")
+    @GetMapping("/sport/{sport}")
     public ExtremeSport findSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport) {
         return extremeSportService.findSport(country, region, city, sport);
     }
 
-    @DeleteMapping("/{country}/{region}/{city}/{sport}")
+    @DeleteMapping("/sport/{sport}")
     public void deleteSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport) {
         extremeSportService.deleteSport(country, region, city, sport);
     }
 
-    @PatchMapping("/{country}/{region}/{city}/{sport}")
+    @PatchMapping("/sport/{sport}")
     @Transactional
     public void updateSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport,
                                                     @RequestParam(required = false) String newName,
@@ -39,7 +40,7 @@ public class ExtremeSportRestController {
         extremeSportService.updateSport(country, region, city, sport, newName, availableFrom, availableTill, costPerDay);
     }
 
-    @GetMapping("/{country}/{region}/{city}/sports")
+    @GetMapping("/sports")
     public List<ExtremeSport> getSports(@PathVariable String country, @PathVariable String region, @PathVariable String city) {
         return extremeSportService.findSports(country, region, city);
     }

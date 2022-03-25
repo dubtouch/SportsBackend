@@ -18,22 +18,22 @@ public class CountryRestController {
         return countryService.findCountries();
     }
 
-    @PostMapping("/{country}")
+    @PostMapping("/country/{country}")
     public void addCountry(@PathVariable String country) {
         countryService.addCountry(country);
     }
 
-    @GetMapping("/{country}")
+    @GetMapping("/country/{country}")
     public Country findCountry(@PathVariable String country) {
         return countryService.findCountry(country);
     }
 
-    @PatchMapping("/{country}")
+    @PatchMapping("/country/{country}")
     public void updateCountry(@PathVariable String country, @RequestParam String newName) {
         countryService.updateCountry(country, newName);
     }
 
-    @DeleteMapping("/{country}")
+    @DeleteMapping("/country/{country}")
     public void deleteCountry(@PathVariable String country) {
         countryService.deleteCountry(country);
     }

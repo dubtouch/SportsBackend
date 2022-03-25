@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
+@RequestMapping("/country/{country}")
 public class RegionRestController {
     private final RegionService regionService;
 
@@ -14,29 +15,29 @@ public class RegionRestController {
         this.regionService = regionService;
     }
 
-    @PostMapping("/{country}/{region}")
+    @PostMapping("/region/{region}")
     public void addRegion(@PathVariable String country, @PathVariable String region) {
         regionService.addRegion(country, region);
     }
 
-    @GetMapping("/{country}/{region}")
+    @GetMapping("/region/{region}")
     public Region findRegion(@PathVariable String country, @PathVariable String region) {
         return regionService.findRegion(country, region);
     }
 
 
-    @GetMapping("/{country}/regions")
-    public List<Region> getRegions(@PathVariable String country) {
+    @GetMapping("/regions")
+    public List<Region> findRegions(@PathVariable String country) {
         return regionService.findRegions(country);
 
     }
 
-    @DeleteMapping("/{country}/{region}")
+    @DeleteMapping("/region/{region}")
     public void deleteRegion(@PathVariable String country, @PathVariable String region) {
         regionService.deleteRegion(country, region);
     }
 
-    @PatchMapping("/{country}/{region}")
+    @PatchMapping("/region/{region}")
     @Transactional
     public void updateRegion(@PathVariable String country, @PathVariable String region, @RequestParam String newName) {
         regionService.updateRegion(country, region, newName);

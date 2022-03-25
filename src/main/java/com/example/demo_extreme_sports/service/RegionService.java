@@ -57,6 +57,7 @@ public class RegionService {
         if (regionResult.isEmpty()) throw new NotFoundException("Region " + region);
         else regionRepository.delete(regionResult.get());
     }
+
     @Transactional
     public void updateRegion(String country, String region, String newName) {
         Optional<Region> result = regionRepository.findRegionByNameAndCountry(country, region);
