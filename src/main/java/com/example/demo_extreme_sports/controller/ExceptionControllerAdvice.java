@@ -50,4 +50,18 @@ public class ExceptionControllerAdvice {
         errorDetails.setMessage("city already present: " + cityAlreadyPresentException.getMessage());
         return ResponseEntity.badRequest().body(errorDetails);
     }
+
+    @ExceptionHandler(ExtremeSportNotFoundException.class)
+    public ResponseEntity<ErrorDetails> extremeSportNotFoundExceptionHandler(ExtremeSportNotFoundException extremeSportNotFoundException) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage("extreme sport not found: " + extremeSportNotFoundException.getMessage());
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(ExtremeSportAlreadyPresent.class)
+    public ResponseEntity<ErrorDetails> extremeSportAlreadyPresentException(ExtremeSportAlreadyPresent extremeSportAlreadyPresent) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage("extreme sport already present: " + extremeSportAlreadyPresent.getMessage());
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
 }
