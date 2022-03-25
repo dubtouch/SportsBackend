@@ -1,8 +1,7 @@
 package com.example.demo_extreme_sports.service;
 
-import com.example.demo_extreme_sports.exception.CountryNotFoundException;
-import com.example.demo_extreme_sports.exception.RegionAlreadyPresentException;
-import com.example.demo_extreme_sports.exception.RegionNotFoundException;
+import com.example.demo_extreme_sports.exception.AlreadyPresentException;
+import com.example.demo_extreme_sports.exception.NotFoundException;
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.model.Region;
 import com.example.demo_extreme_sports.repositories.CountryRepository;
@@ -37,31 +36,31 @@ public class RegionService {
             regionRepository.save(tempRegion);
             return;
         }
-        throw new RegionAlreadyPresentException(region);
+        throw new AlreadyPresentException("Region " + region);
     }
 
     public Region findRegion(String country, String region) {
         return regionRepository.findRegionByNameAndCountry(country, region)
-                .orElseThrow(() -> new RegionNotFoundException(region));
+                .orElseThrow(() -> new NotFoundException("Region " + region));
     }
 
 
     public List<Region> findRegions(String country) {
         Optional<Country> result = countryRepository.findByName(country);
-        if (result.isEmpty()) throw new CountryNotFoundException(country);
+        if (result.isEmpty()) throw new NotFoundException("Country " + country);
         else return regionRepository.findRegions(country);
 
     }
 
     public void deleteRegion(String country, String region) {
         Optional<Region> regionResult = regionRepository.findRegionByNameAndCountry(country, region);
-        if (regionResult.isEmpty()) throw new RegionNotFoundException(region);
+        if (regionResult.isEmpty()) throw new NotFoundException("Region " + region);
         else regionRepository.delete(regionResult.get());
     }
     @Transactional
     public void updateRegion(String country, String region, String newName) {
         Optional<Region> result = regionRepository.findRegionByNameAndCountry(country, region);
-        if (result.isEmpty()) throw new RegionNotFoundException(region);
+        if (result.isEmpty()) throw new NotFoundException("Region " + region);
         else regionRepository.updateRegion(result.get().getId(), newName);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.demo_extreme_sports.service;
 
-import com.example.demo_extreme_sports.exception.CountryAlreadyPresentException;
-import com.example.demo_extreme_sports.exception.CountryNotFoundException;
+import com.example.demo_extreme_sports.exception.AlreadyPresentException;
+import com.example.demo_extreme_sports.exception.NotFoundException;
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.repositories.CountryRepository;
 import org.springframework.stereotype.Service;
@@ -22,25 +22,25 @@ public class CountryService {
         if (result.isEmpty()) {
             Country tempCountry = new Country(country);
             countryRepository.save(tempCountry);
-        } else throw new CountryAlreadyPresentException(country);
+        } else throw new AlreadyPresentException("Country " + country);
     }
 
     public Country findCountry(String country) {
         return countryRepository.findByName(country).
-                orElseThrow(() -> new CountryNotFoundException(country));
+                orElseThrow(() -> new NotFoundException("Country " + country));
     }
 
     @Transactional
     public void updateCountry(String country, String newName) {
         Optional<Country> result = countryRepository.findByName(country);
         if (result.isPresent()) countryRepository.updateCountry(country, newName);
-        else throw new CountryNotFoundException(country);
+        else throw new NotFoundException("Country " + country);
     }
 
     public void deleteCountry(String country) {
         Optional<Country> result = countryRepository.findByName(country);
         if (result.isPresent()) countryRepository.delete(result.get());
-        else throw new CountryNotFoundException(country);
+        else throw new NotFoundException("Country " + country);
     }
 
     public Iterable<Country> findCountries() {

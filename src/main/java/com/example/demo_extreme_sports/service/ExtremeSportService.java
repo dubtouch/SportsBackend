@@ -1,8 +1,7 @@
 package com.example.demo_extreme_sports.service;
 
-import com.example.demo_extreme_sports.exception.CityNotFoundException;
-import com.example.demo_extreme_sports.exception.ExtremeSportAlreadyPresent;
-import com.example.demo_extreme_sports.exception.ExtremeSportNotFoundException;
+import com.example.demo_extreme_sports.exception.AlreadyPresentException;
+import com.example.demo_extreme_sports.exception.NotFoundException;
 import com.example.demo_extreme_sports.model.City;
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.model.ExtremeSport;
@@ -68,18 +67,18 @@ public class ExtremeSportService {
             extremeSport.setCity(cityResult.get());
             extremeSportRepository.save(extremeSport);
         } else {
-            throw new ExtremeSportAlreadyPresent(extremeSport.getName());
+            throw new AlreadyPresentException("Extreme sport " + extremeSport.getName());
         }
     }
 
     public ExtremeSport findSport(String country, String region, String city, String sport) {
         return extremeSportRepository.findExtremeSport(country, region, city, sport)
-                .orElseThrow(() -> new ExtremeSportNotFoundException(sport));
+                .orElseThrow(() -> new NotFoundException("Extreme sport " + sport));
     }
 
     public void deleteSport(String country, String region, String city, String sport) {
         Optional<ExtremeSport> extremeSport = extremeSportRepository.findExtremeSport(country, region, city, sport);
-        if (extremeSport.isEmpty()) throw new ExtremeSportNotFoundException(sport);
+        if (extremeSport.isEmpty()) throw new NotFoundException("Extreme sport " + sport);
         else extremeSportRepository.delete(extremeSport.get());
     }
 
@@ -87,7 +86,7 @@ public class ExtremeSportService {
     public void updateSport(String country, String region, String city, String sport,
                             String newName, String availableFrom, String availableTill, String costPerDay) {
         Optional<ExtremeSport> result = extremeSportRepository.findExtremeSport(country, region, city, sport);
-        if (result.isEmpty()) throw new ExtremeSportNotFoundException(sport);
+        if (result.isEmpty()) throw new NotFoundException("Extreme sport " + sport);
         else {
             String passedName = newName == null ? result.get().getName() : newName;
             LocalDate passedAvailableFrom = availableFrom == null ? result.get().getAvailableFrom() : LocalDate.parse(availableFrom);
@@ -99,7 +98,7 @@ public class ExtremeSportService {
 
     public List<ExtremeSport> findSports(String country, String region, String city) {
         Optional<City> result = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
-        if (result.isEmpty()) throw new CityNotFoundException(city);
+        if (result.isEmpty()) throw new NotFoundException("City " + city);
         else return extremeSportRepository.findSports(country, region, city);
     }
 }

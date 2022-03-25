@@ -1,8 +1,7 @@
 package com.example.demo_extreme_sports.service;
 
-import com.example.demo_extreme_sports.exception.CityAlreadyPresentException;
-import com.example.demo_extreme_sports.exception.CityNotFoundException;
-import com.example.demo_extreme_sports.exception.RegionNotFoundException;
+import com.example.demo_extreme_sports.exception.AlreadyPresentException;
+import com.example.demo_extreme_sports.exception.NotFoundException;
 import com.example.demo_extreme_sports.model.City;
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.model.Region;
@@ -51,30 +50,30 @@ public class CityService {
             cityRepository.save(tempCity);
             return;
         }
-        throw new CityAlreadyPresentException(city);
+        throw new AlreadyPresentException("City " + city);
     }
 
     public City findCity(String country, String region, String city) {
         return cityRepository.findCityByNameAndRegionAndCountry(country, region, city)
-                .orElseThrow(() -> new CityNotFoundException(city));
+                .orElseThrow(() -> new NotFoundException("City " + city));
     }
 
     @Transactional
     public void updateCity(String country, String region, String city, String newName) {
         Optional<City> result = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
-        if (result.isEmpty()) throw new CityNotFoundException(city);
+        if (result.isEmpty()) throw new NotFoundException("City " + city);
         else cityRepository.updateCity(result.get().getId(), newName);
     }
 
     public void deleteCity(String country, String region, String city) {
         Optional<City> tempCity = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
-        if (tempCity.isEmpty()) throw new CityNotFoundException(city);
+        if (tempCity.isEmpty()) throw new NotFoundException("City " + city);
         else cityRepository.delete(tempCity.get());
     }
 
     public List<City> findCities(String country, String region) {
         Optional<Region> result = regionRepository.findRegionByNameAndCountry(country, region);
-        if (result.isEmpty()) throw new RegionNotFoundException(region);
+        if (result.isEmpty()) throw new NotFoundException("Region " + region);
         else return cityRepository.findCities(country, region);
     }
 }
