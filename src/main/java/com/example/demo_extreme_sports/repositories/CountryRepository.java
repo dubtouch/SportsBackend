@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface CountryRepository extends CrudRepository<Country, String> {
 
     @Query("update Country c set c.name=:newName where c.name =:country")
@@ -12,5 +14,5 @@ public interface CountryRepository extends CrudRepository<Country, String> {
     public void updateCountry(String country, String newName);
 
     @Query("select c from Country c where c.name=:country")
-    public Country findByName(String country);
+    public Optional<Country> findByName(String country);
 }
