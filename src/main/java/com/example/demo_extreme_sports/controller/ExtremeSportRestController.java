@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class ExtremeSportRestController {
@@ -91,13 +91,15 @@ public class ExtremeSportRestController {
     public ResponseEntity<ExtremeSport> updateSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport,
                                                     @RequestParam(required = false) String newName,
                                                     @RequestParam(required = false) String availableFrom,
-                                                    @RequestParam(required = false) String availableTill) {
+                                                    @RequestParam(required = false) String availableTill,
+                                                    @RequestParam(required = false) String costPerDay) {
         ExtremeSport result = extremeSportRepository.findExtremeSport(country, region, city, sport);
         if (result == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         String passedName = newName == null ? result.getName() : newName;
         LocalDate passedAvailableFrom = availableFrom == null ? result.getAvailableFrom() : LocalDate.parse(availableFrom);
         LocalDate passedAvailableTill = availableTill == null ? result.getAvailableTill() : LocalDate.parse(availableTill);
-        extremeSportRepository.updateExtremeSport(result.getId(), passedName, passedAvailableFrom, passedAvailableTill);
+        BigDecimal passedCostPerDay = costPerDay == null ? result.getCostPerDay() : new BigDecimal(costPerDay);
+        extremeSportRepository.updateExtremeSport(result.getId(), passedName, passedAvailableFrom, passedAvailableTill, passedCostPerDay);
         return ResponseEntity.status(HttpStatus.OK).body(extremeSportRepository.findExtremeSport(country, region, city, sport));
     }
 
