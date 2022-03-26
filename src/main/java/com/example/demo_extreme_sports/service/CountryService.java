@@ -5,7 +5,6 @@ import com.example.demo_extreme_sports.exception.NotFoundException;
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.repositories.CountryRepository;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.Optional;
 

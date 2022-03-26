@@ -2,12 +2,8 @@ package com.example.demo_extreme_sports.controller;
 
 import com.example.demo_extreme_sports.service.ExtremeSportService;
 import org.springframework.web.bind.annotation.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 public class BestLocationsAvailableController {

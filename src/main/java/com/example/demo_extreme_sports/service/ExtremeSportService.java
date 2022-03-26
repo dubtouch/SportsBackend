@@ -11,10 +11,6 @@ import com.example.demo_extreme_sports.repositories.CountryRepository;
 import com.example.demo_extreme_sports.repositories.ExtremeSportRepository;
 import com.example.demo_extreme_sports.repositories.RegionRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;

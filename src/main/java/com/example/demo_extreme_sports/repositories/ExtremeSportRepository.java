@@ -4,7 +4,6 @@ import com.example.demo_extreme_sports.model.ExtremeSport;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;

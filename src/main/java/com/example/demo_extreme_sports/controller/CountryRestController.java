@@ -2,7 +2,6 @@ package com.example.demo_extreme_sports.controller;
 
 import com.example.demo_extreme_sports.model.Country;
 import com.example.demo_extreme_sports.service.CountryService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
