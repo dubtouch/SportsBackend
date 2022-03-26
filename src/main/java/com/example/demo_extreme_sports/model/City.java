@@ -25,6 +25,13 @@ public class City {
         return name;
     }
 
+    public City(String name, Region region) {
+        this.name = name;
+        this.region = region;
+    }
+
+    public City() {};
+
     public void setName(String name) {
         this.name = name;
     }
@@ -45,16 +52,10 @@ public class City {
         this.region = region;
     }
 
-    public City(String name, Region region) {
-        this.name = name;
-        this.region = region;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public City() {};
 
     public void addExtremeSport(ExtremeSport extremeSport) {
         extremeSportList.add(extremeSport);

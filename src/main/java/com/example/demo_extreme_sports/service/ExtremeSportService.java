@@ -11,11 +11,18 @@ import com.example.demo_extreme_sports.repositories.CountryRepository;
 import com.example.demo_extreme_sports.repositories.ExtremeSportRepository;
 import com.example.demo_extreme_sports.repositories.RegionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ExtremeSportService {
@@ -29,6 +36,15 @@ public class ExtremeSportService {
         this.regionRepository = regionRepository;
         this.cityRepository = cityRepository;
         this.extremeSportRepository = extremeSportRepository;
+    }
+
+    public List<Object[]> findBestLocations(Set<String> sports, String from , String till) {
+        LocalDate fromDate = LocalDate.parse(from);
+        LocalDate tillDate = LocalDate.parse(till);
+        long duration = ChronoUnit.DAYS.between(fromDate, tillDate);
+        return extremeSportRepository.findBestLocations(fromDate, tillDate, BigDecimal.valueOf(duration))
+                .stream().filter(result -> sports.contains((String) result[0]))
+                .collect(Collectors.toList());
     }
 
     public void addSport(ExtremeSport extremeSport, String country, String region, String city) {
@@ -100,5 +116,9 @@ public class ExtremeSportService {
         Optional<City> result = cityRepository.findCityByNameAndRegionAndCountry(country, region, city);
         if (result.isEmpty()) throw new NotFoundException("City " + city);
         else return extremeSportRepository.findSports(country, region, city);
+    }
+
+    public List<String> findAllSportsAvailabe() {
+        return extremeSportRepository.findAllSportsAvailable();
     }
 }

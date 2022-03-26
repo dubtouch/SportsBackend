@@ -16,6 +16,8 @@ public class Country {
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
     private List<Region> regionList;
 
+    public Country(){};
+
     public Long getId() {
         return id;
     }
@@ -28,7 +30,6 @@ public class Country {
         this.name = name;
     }
 
-    public Country(){};
 
     public String getName() {
         return name;

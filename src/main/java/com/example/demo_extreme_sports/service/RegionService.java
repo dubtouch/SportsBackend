@@ -44,7 +44,6 @@ public class RegionService {
                 .orElseThrow(() -> new NotFoundException("Region " + region));
     }
 
-
     public List<Region> findRegions(String country) {
         Optional<Country> result = countryRepository.findByName(country);
         if (result.isEmpty()) throw new NotFoundException("Country " + country);

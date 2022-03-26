@@ -17,6 +17,11 @@ public class ExtremeSport {
     private LocalDate availableFrom;
     private LocalDate availableTill;
     private BigDecimal costPerDay;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "city_name")
+    private City city;
+
 
     public void setId(Long id) {
         this.id = id;
@@ -29,11 +34,6 @@ public class ExtremeSport {
     public void setCostPerDay(BigDecimal costPerDay) {
         this.costPerDay = costPerDay;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "city_name")
-    private City city;
 
     public City getCity() {
         return city;

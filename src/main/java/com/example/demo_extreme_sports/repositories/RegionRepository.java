@@ -17,7 +17,6 @@ public interface RegionRepository extends CrudRepository<Region, String> {
     @Query("update Region r set r.name=:newName where id=:id")
     public void updateRegion(Long id, String newName);
 
-
     @Query("select r from Region r inner join r.country c where c.name=:country")
     public List<Region> findRegions(String country);
 }
