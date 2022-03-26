@@ -4,7 +4,9 @@ package com.example.demo_extreme_sports.controller;
 import com.example.demo_extreme_sports.repositories.ExtremeSportRepository;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,12 +21,10 @@ public class BestLocationsAvailableController {
     }
 
     @GetMapping("/bestlocation")
-    public List<Object[]> getLocations(@RequestBody List<String> sports, @RequestParam String from , @RequestParam String till) {
-        return extremeSportRepository.findBestLocations().stream()
-                .filter(x -> ((LocalDate)x[1]).compareTo(LocalDate.parse(from)) <= 0
-                        && ((LocalDate)x[2]).compareTo(LocalDate.parse(till)) >= 0
-                        && sports.contains((String) x[0]))
-                .sorted(Comparator.comparing(x -> (BigDecimal)x[3]))
-                .collect(Collectors.toList());
+    public List<Object[]> getLocations(@RequestParam String from , @RequestParam String till) {
+        LocalDate fromDate = LocalDate.parse(from);
+        LocalDate tillDate = LocalDate.parse(till);
+        long duration = ChronoUnit.DAYS.between(fromDate, tillDate);
+        return extremeSportRepository.findBestLocations(fromDate, tillDate, BigDecimal.valueOf(duration));
     }
 }

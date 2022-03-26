@@ -25,6 +25,9 @@ public interface ExtremeSportRepository extends CrudRepository<ExtremeSport, Lon
     public List<ExtremeSport> findSports(String country, String region, String city);
 
 
-    @Query("select es.name, es.availableFrom, es.availableTill, es.costPerDay, ct.name, r.name, c.name from ExtremeSport es join es.city ct join ct.region r join r.country c")
-    public List<Object[]> findBestLocations();
+    @Query("select es.name, es.costPerDay*:duration, ct.name, r.name, c.name " +
+            "from ExtremeSport es join es.city ct join ct.region r join r.country c " +
+            "where es.availableFrom<=:from and es.availableTill>=:till " +
+            "order by es.costPerDay asc")
+    public List<Object[]> findBestLocations(LocalDate from, LocalDate till, BigDecimal duration);
 }
