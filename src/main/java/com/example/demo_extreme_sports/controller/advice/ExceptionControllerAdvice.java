@@ -1,4 +1,4 @@
-package com.example.demo_extreme_sports.controller;
+package com.example.demo_extreme_sports.controller.advice;
 
 import com.example.demo_extreme_sports.exception.*;
 import com.example.demo_extreme_sports.model.ErrorDetails;

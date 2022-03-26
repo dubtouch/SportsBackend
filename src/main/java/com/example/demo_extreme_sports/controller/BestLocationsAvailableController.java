@@ -1,5 +1,6 @@
 package com.example.demo_extreme_sports.controller;
 
+import com.example.demo_extreme_sports.controller.view.BestSportResponse;
 import com.example.demo_extreme_sports.service.ExtremeSportService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,13 +15,13 @@ public class BestLocationsAvailableController {
         this.extremeSportService = extremeSportService;
     }
 
-    @GetMapping("/allsports")
+    @GetMapping("/sports")
     public List<String> findAllSportsAvailable() {
         return extremeSportService.findAllSportsAvailabe();
     }
 
-    @GetMapping("/bestlocation")
-    public List<Object[]> findBestLocations(@RequestBody Set<String> sports,@RequestParam String from , @RequestParam String till) {
+    @GetMapping("/bestlocations")
+    public List<BestSportResponse> findBestLocations(@RequestBody Set<String> sports, @RequestParam String from , @RequestParam String till) {
         return extremeSportService.findBestLocations(sports, from, till);
     }
 }

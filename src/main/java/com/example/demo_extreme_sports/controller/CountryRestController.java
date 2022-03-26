@@ -36,6 +36,4 @@ public class CountryRestController {
     public void deleteCountry(@PathVariable String country) {
         countryService.deleteCountry(country);
     }
-
-
 }

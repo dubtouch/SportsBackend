@@ -1,16 +1,15 @@
 package com.example.demo_extreme_sports.service;
 
+import com.example.demo_extreme_sports.controller.view.BestSportResponse;
 import com.example.demo_extreme_sports.exception.AlreadyPresentException;
 import com.example.demo_extreme_sports.exception.NotFoundException;
-import com.example.demo_extreme_sports.model.City;
-import com.example.demo_extreme_sports.model.Country;
-import com.example.demo_extreme_sports.model.ExtremeSport;
-import com.example.demo_extreme_sports.model.Region;
+import com.example.demo_extreme_sports.model.*;
 import com.example.demo_extreme_sports.repositories.CityRepository;
 import com.example.demo_extreme_sports.repositories.CountryRepository;
 import com.example.demo_extreme_sports.repositories.ExtremeSportRepository;
 import com.example.demo_extreme_sports.repositories.RegionRepository;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,12 +33,14 @@ public class ExtremeSportService {
         this.extremeSportRepository = extremeSportRepository;
     }
 
-    public List<Object[]> findBestLocations(Set<String> sports, String from , String till) {
+    public List<BestSportResponse> findBestLocations(Set<String> sports, String from, String till) {
         LocalDate fromDate = LocalDate.parse(from);
         LocalDate tillDate = LocalDate.parse(till);
         long duration = ChronoUnit.DAYS.between(fromDate, tillDate);
-        return extremeSportRepository.findBestLocations(fromDate, tillDate, BigDecimal.valueOf(duration))
-                .stream().filter(result -> sports.contains((String) result[0]))
+        List<ExtremeSport> extremeSportList = extremeSportRepository.findBestLocations(fromDate, tillDate, sports);
+        return extremeSportList
+                .stream()
+                .map(extremeSport -> new BestSportResponse(extremeSport, duration))
                 .collect(Collectors.toList());
     }
 

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ExtremeSportRepository extends CrudRepository<ExtremeSport, Long> {
 
@@ -21,11 +22,11 @@ public interface ExtremeSportRepository extends CrudRepository<ExtremeSport, Lon
     @Query("select es from ExtremeSport es join es.city ct join ct.region r join r.country c where ct.name=:city and r.name=:region and c.name=:country")
     public List<ExtremeSport> findSports(String country, String region, String city);
 
-    @Query("select es.name, es.costPerDay*:duration as total_cost, ct.name, r.name, c.name " +
-            "from ExtremeSport es join es.city ct join ct.region r join r.country c " +
-            "where es.availableFrom<=:from and es.availableTill>=:till " +
+    @Query("select es " +
+            "from ExtremeSport es " +
+            "where es.availableFrom<=:from and es.availableTill>=:till and es.name in (:sports)" +
             "order by es.costPerDay asc")
-    public List<Object[]> findBestLocations(LocalDate from, LocalDate till, BigDecimal duration);
+    public List<ExtremeSport> findBestLocations(LocalDate from, LocalDate till, Set<String> sports);
 
     @Query("select distinct es.name from ExtremeSport es")
     public List<String> findAllSportsAvailable();
