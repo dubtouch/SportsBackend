@@ -55,10 +55,4 @@ public class City {
     public Long getId() {
         return id;
     }
-
-
-    public void addExtremeSport(ExtremeSport extremeSport) {
-        extremeSportList.add(extremeSport);
-        extremeSport.setCity(this);
-    }
 }

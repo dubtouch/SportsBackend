@@ -38,7 +38,6 @@ public class RegionRestController {
     }
 
     @PatchMapping("/region/{region}")
-    @Transactional
     public void updateRegion(@PathVariable String country, @PathVariable String region, @RequestParam String newName) {
         regionService.updateRegion(country, region, newName);
     }

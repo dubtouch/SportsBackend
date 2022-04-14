@@ -13,6 +13,5 @@ public interface CountryRepository extends CrudRepository<Country, String> {
     @Modifying
     public void updateCountry(String country, String newName);
 
-    @Query("select c from Country c where c.name=:country")
     public Optional<Country> findByName(String country);
 }

@@ -31,7 +31,6 @@ public class ExtremeSportRestController {
     }
 
     @PatchMapping("/sport/{sport}")
-    @Transactional
     public void updateSport(@PathVariable String country, @PathVariable String region, @PathVariable String city, @PathVariable String sport,
                                                     @RequestParam(required = false) String newName,
                                                     @RequestParam(required = false) String availableFrom,

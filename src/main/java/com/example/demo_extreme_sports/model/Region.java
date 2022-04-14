@@ -60,10 +60,4 @@ public class Region {
     public void setCountry(Country country) {
         this.country = country;
     }
-
-    public void addCity(City city) {
-        cityList.add(city);
-        city.setRegion(this);
-    }
-
 }
